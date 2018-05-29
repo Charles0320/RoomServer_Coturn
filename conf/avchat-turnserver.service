@@ -1,0 +1,13 @@
+[Unit]
+Description=AVChat Turnserver Server
+
+[Service]
+User=root
+Type=simple
+Restart=always
+PIDFile=/run/avchat/avchat_turnserver.pid
+ExecStart=/usr/bin/avchat-turnserver-server
+
+[Install]
+WantedBy=multi-user.target
+                           
