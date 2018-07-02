@@ -1833,6 +1833,8 @@ static void init_domain(void)
 
 int main(int argc, char **argv)
 {
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "===============START==================");
 	int c = 0;
 
 	IS_TURN_SERVER = 1;
@@ -2137,6 +2139,21 @@ int main(int argc, char **argv)
 			TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "pid file created: %s\n", s);
 		}
 	}
+
+	u08bits addrbuf[MAX_IOA_ADDR_STRING];
+
+	//inet_ntop(AF_INET,&turn_params.external_ip,addrbuf, INET_ADDRSTRLEN);
+
+	addr_to_string_no_port(turn_params.external_ip,addrbuf);
+
+	u08bits turnBuffer[MAX_IOA_ADDR_STRING];
+
+	snprintf((s08bits*)turnBuffer, MAX_IOA_ADDR_STRING, "%s:%d", addrbuf, turn_params.listener_port);
+
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------external ip=%s-----------",turnBuffer);
+
+	
 
 	setup_server();
 
