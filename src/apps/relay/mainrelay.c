@@ -1886,7 +1886,7 @@ static void zktest_string_completion(int rc, const char *name, const void *data)
 {
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
     if (!rc) {
-        fprintf(stderr, "\tname = %s\n", name);
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tname = %s\n", name);
     }
 }
 
@@ -1901,7 +1901,7 @@ static void zookeeperRegister(u08bits* externalIpWithPort){
     zkhandle = zookeeper_init(host,
             zktest_watcher_g, timeout, 0, "hello zookeeper.", 0);
     if (zkhandle == NULL) {
-        fprintf(stderr, "Error when connecting to zookeeper servers...\n");
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error when connecting to zookeeper servers...\n");
         exit(EXIT_FAILURE);
     }
 
@@ -1915,6 +1915,7 @@ static void zookeeperRegister(u08bits* externalIpWithPort){
 	if(ret){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver is not existed");
+		
 
 		ret = zoo_acreate(zkhandle, "/turnserver", "", 0,
            &ZOO_OPEN_ACL_UNSAFE, 0,
@@ -1929,7 +1930,17 @@ static void zookeeperRegister(u08bits* externalIpWithPort){
 
 	}
 
-    ret = zoo_acreate(zkhandle, "/turnserver/id", externalIpWithPort, strlen(externalIpWithPort),
+
+	u08bits empNode[256];
+
+	snprintf((s08bits*)empNode, 256, "/turnserver/%s", externalIpWithPort);
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "empNode:%s", empNode);
+
+	
+	
+
+    ret = zoo_acreate(zkhandle, empNode, externalIpWithPort, strlen(externalIpWithPort),
            &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
            zktest_string_completion, "acreate");
     if (ret) {
