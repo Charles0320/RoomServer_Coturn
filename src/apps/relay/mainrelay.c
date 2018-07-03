@@ -1900,7 +1900,7 @@ static void zookeeperRegister(const char* zookeeperServer,const char* externalIp
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s",externalIpWithPort);
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"ZOO_SEQUENCE=%d,ZOO_EPHEMERAL=%d",ZOO_SEQUENCE,ZOO_EPHEMERAL);
 
-    int timeout = 30000;
+    int timeout = 3000;
     
     zkhandle = zookeeper_init(zookeeperServer,
             zktest_watcher_g, timeout, 0, "hello zookeeper.", 0);
@@ -1928,7 +1928,7 @@ static void zookeeperRegister(const char* zookeeperServer,const char* externalIp
 		if(ret)
 		{
 			TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver create failed!!!");
-			exit(0);
+			exit(EXIT_FAILURE);
 
 		}
 
