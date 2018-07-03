@@ -99,6 +99,8 @@ extern "C" {
 
 #define DEFAULT_CPUS_NUMBER (2)
 
+#define DEFAULT_ZOOKEEPER_SERVER ("localhost:2181")
+
 /////////// TYPES ///////////////////////////////////
 
 enum _DH_KEY_SIZE {
@@ -307,6 +309,12 @@ typedef struct _turn_params_ {
 /////// CPUs //////////////
 
   unsigned long cpus;
+
+
+////////////// Zookeeper ////////////////
+
+  char zookeeper_server_name[1025];
+
 
 } turn_params_t;
 

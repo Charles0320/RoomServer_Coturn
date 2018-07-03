@@ -147,7 +147,10 @@ TURN_CREDENTIALS_NONE, /* ct */
 ///////////// Users DB //////////////
 { (TURN_USERDB_TYPE)0, {"\0"}, {0,NULL, {NULL,0}} },
 ///////////// CPUs //////////////////
-DEFAULT_CPUS_NUMBER
+DEFAULT_CPUS_NUMBER,
+DEFAULT_ZOOKEEPER_SERVER
+
+
 };
 
 //////////////// OpenSSL Init //////////////////////
@@ -746,7 +749,8 @@ enum EXTRA_OPTS {
 	SERVER_NAME_OPT,
 	OAUTH_OPT,
 	PROD_OPT,
-	NO_HTTP_OPT
+	NO_HTTP_OPT,
+	ZOOKEEPER_OPT
 };
 
 struct myoption {
@@ -765,6 +769,7 @@ struct uoptions {
 };
 
 static const struct myoption long_options[] = {
+				{"zookeeper-server",required_argument,NULL,ZOOKEEPER_OPT},
 				{ "listening-device", required_argument, NULL, 'd' },
 				{ "listening-port", required_argument, NULL, 'p' },
 				{ "tls-listening-port", required_argument, NULL, TLS_PORT_OPT },
@@ -940,6 +945,9 @@ static void set_option(int c, char *value)
   }
 
   switch (c) {
+  case ZOOKEEPER_OPT:
+  	  STRCPY(turn_params.zookeeper_server_name,value);
+  	  break;
   case SERVER_NAME_OPT:
 	  STRCPY(turn_params.oauth_server_name,value);
 	  break;
@@ -1837,7 +1845,7 @@ static void init_domain(void)
 static void zktest_watcher_g(zhandle_t* zh, int type, int state,
         const char* path, void* watcherCtx)
 {
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"Something happened.\n");
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"Something happened.%x\n",zh);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"type: %d\n", type);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"state: %d\n", state);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"path: %s\n", path);
@@ -1877,10 +1885,6 @@ static void zktest_stat_completion(int rc, const struct Stat *stat, const void *
     zktest_dump_stat(stat);
 }
 
-static void zktest_void_completion(int rc, const void *data)
-{
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
-}
 
 static void zktest_string_completion(int rc, const char *name, const void *data)
 {
@@ -1890,15 +1894,15 @@ static void zktest_string_completion(int rc, const char *name, const void *data)
     }
 }
 
-static void zookeeperRegister(u08bits* externalIpWithPort){
-
+static void zookeeperRegister(const char* zookeeperServer,const char* externalIpWithPort){
+	
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperServer---%s",zookeeperServer);
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s",externalIpWithPort);
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"ZOO_SEQUENCE=%d,ZOO_EPHEMERAL=%d",ZOO_SEQUENCE,ZOO_EPHEMERAL);
 
-	const char* host = "192.168.10.250:2181";
     int timeout = 30000;
     
-    zkhandle = zookeeper_init(host,
+    zkhandle = zookeeper_init(zookeeperServer,
             zktest_watcher_g, timeout, 0, "hello zookeeper.", 0);
     if (zkhandle == NULL) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error when connecting to zookeeper servers...\n");
@@ -2284,7 +2288,12 @@ int main(int argc, char **argv)
 
 	drop_privileges();
 
-	zookeeperRegister(turnBuffer);
+
+	const char* zookeeper = (const char*)turn_params.zookeeper_server_name;
+
+	const char* empNode = (const char*)turnBuffer;
+
+	zookeeperRegister(zookeeper,empNode);
 	
 	run_listener_server(&(turn_params.listener));
 
