@@ -77,6 +77,8 @@
 
 #include "ns_ioalib_impl.h"
 
+#include <zookeeper.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

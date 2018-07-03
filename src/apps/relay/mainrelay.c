@@ -70,6 +70,8 @@ char HTTP_ALPN[128] = "http/1.1";
 
 #define DEFAULT_GENERAL_RELAY_SERVERS_NUMBER (1)
 
+zhandle_t* zkhandle = NULL;
+
 turn_params_t turn_params = {
 NULL, NULL,
 #if TLSv1_1_SUPPORTED
@@ -1831,6 +1833,119 @@ static void init_domain(void)
 #endif
 }
 
+
+static void zktest_watcher_g(zhandle_t* zh, int type, int state,
+        const char* path, void* watcherCtx)
+{
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"Something happened.\n");
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"type: %d\n", type);
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"state: %d\n", state);
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"path: %s\n", path);
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"watcherCtx: %s\n", (char *)watcherCtx);
+}
+
+static void zktest_dump_stat(const struct Stat *stat)
+{
+    char tctimes[40];
+    char tmtimes[40];
+    time_t tctime;
+    time_t tmtime;
+
+    if (!stat) {
+        fprintf(stderr,"null\n");
+        return;
+    }
+    tctime = stat->ctime/1000;
+    tmtime = stat->mtime/1000;
+       
+    ctime_r(&tmtime, tmtimes);
+    ctime_r(&tctime, tctimes);
+       
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tctime = %s\tczxid=%llx\n"
+    "\tmtime=%s\tmzxid=%llx\n"
+    "\tversion=%x\taversion=%x\n"
+    "\tephemeralOwner = %llx\n",
+     tctimes, stat->czxid,
+     tmtimes, stat->mzxid,
+    (unsigned int)stat->version, (unsigned int)stat->aversion,
+    stat->ephemeralOwner);
+}
+
+static void zktest_stat_completion(int rc, const struct Stat *stat, const void *data)
+{
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "%s: rc = %d Stat:\n", (char*)data, rc);
+    zktest_dump_stat(stat);
+}
+
+static void zktest_void_completion(int rc, const void *data)
+{
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
+}
+
+static void zktest_string_completion(int rc, const char *name, const void *data)
+{
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
+    if (!rc) {
+        fprintf(stderr, "\tname = %s\n", name);
+    }
+}
+
+static void zookeeperRegister(u08bits* externalIpWithPort){
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s",externalIpWithPort);
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"ZOO_SEQUENCE=%d,ZOO_EPHEMERAL=%d",ZOO_SEQUENCE,ZOO_EPHEMERAL);
+
+	const char* host = "192.168.10.250:2181";
+    int timeout = 30000;
+    
+    zkhandle = zookeeper_init(host,
+            zktest_watcher_g, timeout, 0, "hello zookeeper.", 0);
+    if (zkhandle == NULL) {
+        fprintf(stderr, "Error when connecting to zookeeper servers...\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // struct ACL ALL_ACL[] = {{ZOO_PERM_ALL, ZOO_ANYONE_ID_UNSAFE}};
+    // struct ACL_vector ALL_PERMS = {1, ALL_ACL};
+
+	int ret = 0;
+
+	ret = zoo_aexists(zkhandle, "/turnserver", 1, zktest_stat_completion, "aexists");
+
+	if(ret){
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver is not existed");
+
+		ret = zoo_acreate(zkhandle, "/turnserver", "", 0,
+           &ZOO_OPEN_ACL_UNSAFE, 0,
+           zktest_string_completion, "turnserver acreate");
+
+		if(ret)
+		{
+			TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver create failed!!!");
+			exit(0);
+
+		}
+
+	}
+
+    ret = zoo_acreate(zkhandle, "/turnserver/id", externalIpWithPort, strlen(externalIpWithPort),
+           &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
+           zktest_string_completion, "acreate");
+    if (ret) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
+		exit(0);
+       
+    }
+
+
+
+}
+
+
+
+
+
 int main(int argc, char **argv)
 {
 
@@ -2158,8 +2273,8 @@ int main(int argc, char **argv)
 
 	drop_privileges();
 
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------drop_privileges-----------");
-
+	zookeeperRegister(turnBuffer);
+	
 	run_listener_server(&(turn_params.listener));
 
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------end-----------");

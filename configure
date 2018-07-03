@@ -151,8 +151,8 @@ testlibmysql() {
 	
 testlibzookeeper(){
 	ZOOKEEPER_CFLAGS="-I${PREFIX}/zookeeper/include -I${PREFIX}/include/zookeeper/"
-    ZOOKEEPER_CFLAGS="${MYSQL_CFLAGS} -I/usr/local/zookeeper/include -I/usr/local/include/zookeeper/"
-    ZOOKEEPER_CFLAGS="${MYSQL_CFLAGS} -I/usr/zookeeper/include -I/usr/include/zookeeper/"
+    ZOOKEEPER_CFLAGS="${ZOOKEEPER_CFLAGS} -I/usr/local/zookeeper/include -I/usr/local/include/zookeeper/"
+    ZOOKEEPER_CFLAGS="${ZOOKEEPER_CFLAGS} -I/usr/zookeeper/include -I/usr/include/zookeeper/"
     for ilib in ${PREFIX}/zookeeper/lib ${PREFIX}/lib/zookeeper ${PREFIX}/lib64/zookeeper /usr/local/zookeeper/lib /usr/local/lib/zookeeper /usr/local/lib64/zookeeper /usr/zookeeper/lib /usr/lib/zookeeper /usr/lib64/zookeeper
     do
       if [ -d ${ilib} ] ; then
@@ -167,10 +167,7 @@ testlibzookeeper(){
     ER=$?
     if ! [ ${ER} -eq 0 ] ; then
     	${ECHO_CMD}
-		${ECHO_CMD} "ZOOKEEPER DEVELOPMENT LIBRARY (libzookeeper_mt) AND/OR HEADER (zookeeper.h)"
-		${ECHO_CMD} "	ARE NOT INSTALLED PROPERLY ON THIS SYSTEM."
-		${ECHO_CMD} "	THAT'S OK BUT THE TURN SERVER IS BUILDING WITHOUT ZOOKEEPER SUPPORT."
-		${ECHO_CMD}
+		${ECHO_CMD} "Libevent2 development is not installed properly"
 		return 0
     else
 		DBCFLAGS="${DBCFLAGS} ${ZOOKEEPER_CFLAGS}"
@@ -1175,19 +1172,21 @@ fi
 ###########################
 # Test ZOOKEEPER
 ###########################
-
-if [ -z "${TURN_NO_ZOOKEEPER}" ] ; then
-
-	testlibzookeeper
-	ER=$?
-	if ! [ ${ER} -eq 0 ] ; then
-		${ECHO_CMD} "ZOOKEEPER found."
-	else
-		TURN_NO_ZOOKEEPER="-DTURN_NO_ZOOKEEPER"
-	fi
+testlibzookeeper
+ER=$?
+if ! [ ${ER} -eq 0 ] ; then
+	${ECHO_CMD} "ZOOKEEPER found."
 else
-	TURN_NO_ZOOKEEPER="-DTURN_NO_ZOOKEEPER"
+	${ECHO_CMD} "ERROR: Libzookeeper development libraries are not installed properly in required location."
+    ${ECHO_CMD} "ERROR: may be you have just too old libzookeeper tool - then you have to upgrade it."
+    ${ECHO_CMD} "See the INSTALL file."
+    ${ECHO_CMD} "Abort."
+    cleanup
+    exit
 fi
+
+
+
 ###########################
 # Test MongoDB
 ###########################
@@ -1292,7 +1291,7 @@ ${ECHO_CMD} "LDFLAGS += ${OSLIBS}" >> Makefile
 ${ECHO_CMD} "DBLIBS += ${DBLIBS}" >> Makefile
 ${ECHO_CMD} "CFLAGS += ${OSCFLAGS}" >> Makefile
 ${ECHO_CMD} "CPPFLAGS = ${CPPFLAGS}" >> Makefile
-${ECHO_CMD} "DBCFLAGS += ${DBCFLAGS} ${TURN_NO_PQ} ${TURN_NO_MYSQL} ${TURN_NO_SQLITE} ${TURN_NO_MONGO} ${TURN_NO_ZOOKEEPER} ${TURN_NO_HIREDIS}" >> Makefile
+${ECHO_CMD} "DBCFLAGS += ${DBCFLAGS} ${TURN_NO_PQ} ${TURN_NO_MYSQL} ${TURN_NO_SQLITE} ${TURN_NO_MONGO} ${TURN_NO_HIREDIS}" >> Makefile
 ${ECHO_CMD} "#" >> Makefile
 ${ECHO_CMD} "PORTNAME = ${PORTNAME}" >> Makefile
 ${ECHO_CMD} "PREFIX = ${PREFIX}" >> Makefile
