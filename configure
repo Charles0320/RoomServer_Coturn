@@ -24,6 +24,8 @@ cleanup() {
 	rm -rf ${HR_TMPCPROGC}
 	rm -rf ${HR_TMPCPROGB}
 	rm -rf ${TMPCADDRPROGO}
+	rm -rf ${ZOOKEEPER_TMPCPROGC}
+	rm -rf ${ZOOKEEPER_TMPCPROGB}
 }
 
 testlibraw() {
@@ -145,6 +147,39 @@ testlibmysql() {
 		return 1
     fi
 }
+
+	
+testlibzookeeper(){
+	ZOOKEEPER_CFLAGS="-I${PREFIX}/zookeeper/include -I${PREFIX}/include/zookeeper/"
+    ZOOKEEPER_CFLAGS="${MYSQL_CFLAGS} -I/usr/local/zookeeper/include -I/usr/local/include/zookeeper/"
+    ZOOKEEPER_CFLAGS="${MYSQL_CFLAGS} -I/usr/zookeeper/include -I/usr/include/zookeeper/"
+    for ilib in ${PREFIX}/zookeeper/lib ${PREFIX}/lib/zookeeper ${PREFIX}/lib64/zookeeper /usr/local/zookeeper/lib /usr/local/lib/zookeeper /usr/local/lib64/zookeeper /usr/zookeeper/lib /usr/lib/zookeeper /usr/lib64/zookeeper
+    do
+      if [ -d ${ilib} ] ; then
+        ZOOKEEPER_LIBS="${ZOOKEEPER_LIBS} -L${ilib}"
+	if ! [ -z "${TURN_ACCEPT_RPATH}" ] ; then
+	    TURN_RPATH="${TURN_RPATH} -Wl,-rpath,${ilib}"
+	fi
+      fi
+    done
+    ZOOKEEPER_LIBS="${OSLIBS} ${ZOOKEEPER_LIBS} -lzookeeper_mt"
+    ${CC} ${ZOOKEEPER_TMPCPROGC} -o ${ZOOKEEPER_TMPCPROGB} ${OSCFLAGS} ${DBCFLAGS} ${DBLIBS} ${ZOOKEEPER_CFLAGS} ${ZOOKEEPER_LIBS} ${OSLIBS} 2>>/dev/null
+    ER=$?
+    if ! [ ${ER} -eq 0 ] ; then
+    	${ECHO_CMD}
+		${ECHO_CMD} "ZOOKEEPER DEVELOPMENT LIBRARY (libzookeeper_mt) AND/OR HEADER (zookeeper.h)"
+		${ECHO_CMD} "	ARE NOT INSTALLED PROPERLY ON THIS SYSTEM."
+		${ECHO_CMD} "	THAT'S OK BUT THE TURN SERVER IS BUILDING WITHOUT ZOOKEEPER SUPPORT."
+		${ECHO_CMD}
+		return 0
+    else
+		DBCFLAGS="${DBCFLAGS} ${ZOOKEEPER_CFLAGS}"
+		DBLIBS="${DBLIBS} ${ZOOKEEPER_LIBS}"
+		return 1
+    fi
+	
+}
+
 
 testlibmongoc() {
     for inc in ${INCLUDEDIR}/libmongoc-1.0 ${INCLUDEDIR}/libbson-1.0 /usr/local/include/libmongoc-1.0 /usr/local/include/libbson-1.0 /usr/libmongoc-1.0 /usr/libbson-1.0 /usr/include/libbson-1.0/ /usr/include/libmongoc-1.0/
@@ -770,6 +805,46 @@ int main(int argc, char** argv) {
 }
 !
 
+ZOOKEEPER_TMPCPROG=__test__ccomp__libzookeeper__$$
+ZOOKEEPER_TMPCPROGC=${TMPDIR}/${ZOOKEEPER_TMPCPROG}.c
+ZOOKEEPER_TMPCPROGB=${TMPDIR}/${ZOOKEEPER_TMPCPROG}
+
+cat > ${ZOOKEEPER_TMPCPROGC} <<!
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <zookeeper.h>
+#include <zookeeper_log.h>
+
+void zktest_watcher_g(zhandle_t* zh,int type,int state,
+	const char* path,void* watcherCtx)
+{
+	printf("Something happened.\n");
+	printf("type:%d\n",type);
+	printf("state:%d\n",state);
+	printf("path:%d\n",path);
+	printf("watcherCtx:%s\n",(char*)watcherCtx);
+}
+int main(int argc, char** argv) {
+
+	const char* host = "localhost:2181";
+	int timeout = 10000;
+
+	zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
+	zhandle_t* zkhandle = zookeeper_init(host,zktest_watcher_g,timeout,0,"hello zookeeper",0);
+
+	if(zkhandle == NULL){
+		fprintf(stderr,"Error when connecting to zookeeper servers...\n");
+		exit(EXIT_FAILURE);
+	}
+	zookeeper_close(zkhandle);
+	
+	  
+}
+!
+
+
+
 ##########################
 # What is our compiler ?
 ##########################
@@ -1096,6 +1171,23 @@ else
 	TURN_NO_MYSQL="-DTURN_NO_MYSQL"
 fi
 
+
+###########################
+# Test ZOOKEEPER
+###########################
+
+if [ -z "${TURN_NO_ZOOKEEPER}" ] ; then
+
+	testlibzookeeper
+	ER=$?
+	if ! [ ${ER} -eq 0 ] ; then
+		${ECHO_CMD} "ZOOKEEPER found."
+	else
+		TURN_NO_ZOOKEEPER="-DTURN_NO_ZOOKEEPER"
+	fi
+else
+	TURN_NO_ZOOKEEPER="-DTURN_NO_ZOOKEEPER"
+fi
 ###########################
 # Test MongoDB
 ###########################
@@ -1200,7 +1292,7 @@ ${ECHO_CMD} "LDFLAGS += ${OSLIBS}" >> Makefile
 ${ECHO_CMD} "DBLIBS += ${DBLIBS}" >> Makefile
 ${ECHO_CMD} "CFLAGS += ${OSCFLAGS}" >> Makefile
 ${ECHO_CMD} "CPPFLAGS = ${CPPFLAGS}" >> Makefile
-${ECHO_CMD} "DBCFLAGS += ${DBCFLAGS} ${TURN_NO_PQ} ${TURN_NO_MYSQL} ${TURN_NO_SQLITE} ${TURN_NO_MONGO} ${TURN_NO_HIREDIS}" >> Makefile
+${ECHO_CMD} "DBCFLAGS += ${DBCFLAGS} ${TURN_NO_PQ} ${TURN_NO_MYSQL} ${TURN_NO_SQLITE} ${TURN_NO_MONGO} ${TURN_NO_ZOOKEEPER} ${TURN_NO_HIREDIS}" >> Makefile
 ${ECHO_CMD} "#" >> Makefile
 ${ECHO_CMD} "PORTNAME = ${PORTNAME}" >> Makefile
 ${ECHO_CMD} "PREFIX = ${PREFIX}" >> Makefile

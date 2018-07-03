@@ -2154,12 +2154,15 @@ int main(int argc, char **argv)
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------external ip=%s-----------",turnBuffer);
 
 	
-
 	setup_server();
 
 	drop_privileges();
 
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------drop_privileges-----------");
+
 	run_listener_server(&(turn_params.listener));
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------end-----------");
 
 	return 0;
 }
