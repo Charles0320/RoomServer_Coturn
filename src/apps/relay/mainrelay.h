@@ -315,6 +315,9 @@ typedef struct _turn_params_ {
 
   char zookeeper_server_name[1025];
 
+  char zookeeper_emp_node[1025];
+
+
 
 } turn_params_t;
 

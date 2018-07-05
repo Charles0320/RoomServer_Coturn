@@ -148,7 +148,8 @@ TURN_CREDENTIALS_NONE, /* ct */
 { (TURN_USERDB_TYPE)0, {"\0"}, {0,NULL, {NULL,0}} },
 ///////////// CPUs //////////////////
 DEFAULT_CPUS_NUMBER,
-DEFAULT_ZOOKEEPER_SERVER
+DEFAULT_ZOOKEEPER_SERVER,
+""
 
 
 };
@@ -1850,6 +1851,12 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"state: %d\n", state);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"path: %s\n", path);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"watcherCtx: %s\n", (char *)watcherCtx);
+
+	if(state==ZOO_CONNECTED_STATE)
+	{
+		createEmpNode(zh);
+		
+	}
 }
 
 static void zktest_dump_stat(const struct Stat *stat)
@@ -1894,11 +1901,33 @@ static void zktest_string_completion(int rc, const char *name, const void *data)
     }
 }
 
-static void zookeeperRegister(const char* zookeeperServer,const char* externalIpWithPort){
+static void createEmpNode(zhandle_t* zt)
+{
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s",turn_params.zookeeper_emp_node);
+
+	u08bits empNode[256];
+
+	snprintf((s08bits*)empNode, 256, "/turnserver/%s", turn_params.zookeeper_emp_node);
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "empNode:%s", empNode);
+
+
+    ret = zoo_acreate(zt, empNode, empNode, strlen(empNode),
+           &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
+           zktest_string_completion, "acreate");
+	
+    if (ret) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
+       
+    }
+
+}
+
+static void zookeeperRegister(const char* zookeeperServer){
 	
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperServer---%s",zookeeperServer);
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s",externalIpWithPort);
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"ZOO_SEQUENCE=%d,ZOO_EPHEMERAL=%d",ZOO_SEQUENCE,ZOO_EPHEMERAL);
+	
 
     int timeout = 3000;
     
@@ -1934,25 +1963,7 @@ static void zookeeperRegister(const char* zookeeperServer,const char* externalIp
 
 	}
 
-
-	u08bits empNode[256];
-
-	snprintf((s08bits*)empNode, 256, "/turnserver/%s", externalIpWithPort);
-
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "empNode:%s", empNode);
-
-	
-	
-
-    ret = zoo_acreate(zkhandle, empNode, externalIpWithPort, strlen(externalIpWithPort),
-           &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
-           zktest_string_completion, "acreate");
-    if (ret) {
-        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
-		exit(0);
-       
-    }
-
+	createEmpNode(zkhandle);
 
 
 }
@@ -2289,11 +2300,14 @@ int main(int argc, char **argv)
 	drop_privileges();
 
 
+	
 	const char* zookeeper = (const char*)turn_params.zookeeper_server_name;
 
 	const char* empNode = (const char*)turnBuffer;
 
-	zookeeperRegister(zookeeper,empNode);
+	STRCPY(empNode,turn_params.zookeeper_emp_node);
+
+	zookeeperRegister(zookeeper);
 	
 	run_listener_server(&(turn_params.listener));
 
