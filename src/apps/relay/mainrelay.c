@@ -1843,6 +1843,40 @@ static void init_domain(void)
 }
 
 
+static void zktest_string_completion(int rc, const char *name, const void *data)
+{
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
+    if (!rc) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tname = %s\n", name);
+    }
+}
+
+static void createEmpNode(zhandle_t* zt)
+{
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s",turn_params.zookeeper_emp_node);
+
+	u08bits empNode[256];
+
+	snprintf((s08bits*)empNode, 256, "/turnserver/%s", turn_params.zookeeper_emp_node);
+
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "empNode:%s", empNode);
+
+	const char* empNodeConst = (const char*)empNode;
+
+	
+
+    int ret = zoo_acreate(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
+           &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
+           zktest_string_completion, "acreate");
+	
+    if (ret) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
+       
+    }
+
+}
+
 static void zktest_watcher_g(zhandle_t* zh, int type, int state,
         const char* path, void* watcherCtx)
 {
@@ -1893,36 +1927,8 @@ static void zktest_stat_completion(int rc, const struct Stat *stat, const void *
 }
 
 
-static void zktest_string_completion(int rc, const char *name, const void *data)
-{
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
-    if (!rc) {
-        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tname = %s\n", name);
-    }
-}
-
-static void createEmpNode(zhandle_t* zt)
-{
-
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s",turn_params.zookeeper_emp_node);
-
-	u08bits empNode[256];
-
-	snprintf((s08bits*)empNode, 256, "/turnserver/%s", turn_params.zookeeper_emp_node);
-
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "empNode:%s", empNode);
 
 
-    ret = zoo_acreate(zt, empNode, empNode, strlen(empNode),
-           &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
-           zktest_string_completion, "acreate");
-	
-    if (ret) {
-        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
-       
-    }
-
-}
 
 static void zookeeperRegister(const char* zookeeperServer){
 	
@@ -2303,9 +2309,10 @@ int main(int argc, char **argv)
 	
 	const char* zookeeper = (const char*)turn_params.zookeeper_server_name;
 
-	const char* empNode = (const char*)turnBuffer;
 
-	STRCPY(empNode,turn_params.zookeeper_emp_node);
+	STRCPY(turn_params.zookeeper_emp_node,turnBuffer);
+
+
 
 	zookeeperRegister(zookeeper);
 	
