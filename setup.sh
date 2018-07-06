@@ -7,9 +7,11 @@ WORK_PATH="${HOME}/CharlesWork"
 
 ZOO_PATH="${WORK_PATH}/zookeeper"
 
-SYSTEM_DIR=/lib/systemd/system
+SYSTEM_DIR='/lib/systemd/system'
 
-SYSTEM_CONFIG="${SYSTEM_DIR}/avchat-turnserver.service"
+CONFIG_NAME='avchat-turnserver.service'
+
+SYSTEM_CONFIG="${SYSTEM_DIR}/${CONFIG_NAME}"
 
 
 
@@ -78,6 +80,11 @@ function jwaoo_coturn_systemd()
 	echo '[Install]' >> $SYSTEM_CONFIG
 	echo 'WantedBy=multi-user.target' >> $SYSTEM_CONFIG
 
+	systemctl daemon-reload
+
+	systemctl enable $CONFIG_NAME
+	systemctl start $CONFIG_NAME
+
 }
 
 function jwaoo_copy_Config()
@@ -106,8 +113,6 @@ function jwaoo_install_coturn()
 
 	jwaoo_coturn_systemd || return 1
 
-	jwaoo_coturn_systemd || return 1
-
 	jwaoo_copy_Config || return 1
 
 
@@ -132,7 +137,7 @@ case "$1" in
 		;;
 
 	*)
-		jwaoo_install_depends && jwaoo_install_zookeeper && jwaoo_install_coturn && jwaoo_install_im
+		jwaoo_install_depends && jwaoo_install_zookeeper && jwaoo_install_coturn 
 		;;
 esac
 
