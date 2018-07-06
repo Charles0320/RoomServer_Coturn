@@ -107,7 +107,7 @@ function jwaoo_copy_Config()
 function jwaoo_install_coturn()
 {
 	echo "Build: ${COTURN_PATH}"
-	jwaoo_git_clone "http://180.169.167.166:6380/git/RoomServer_Coturn.git" "${COTURN_PATH}"  || return 1
+	jwaoo_git_clone "http://180.169.167.166:6380/git/RoomServer_Coturn.git" "${COTURN_PATH}"  "v1.0.0" || return 1
 	./configure --prefix=/usr || return 1
 	make -j && make install || return 1
 
