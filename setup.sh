@@ -83,7 +83,7 @@ function jwaoo_coturn_systemd()
 	systemctl daemon-reload
 
 	systemctl enable $CONFIG_NAME
-	systemctl start $CONFIG_NAME
+	
 
 }
 
