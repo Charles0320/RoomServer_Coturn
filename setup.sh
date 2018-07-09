@@ -31,11 +31,11 @@ function jwaoo_install_depends()
 {
 	case "${DISTRIBUTOR_ID}" in
 		Ubuntu)
-			apt-get -y install git g++ make libtool automake autoconf pkg-config unzip libssl-dev sqlite3 libevent-dev libhiredis-dev libpq-dev mysql-client|| return 1
+			apt-get -y install git g++ make libtool automake autoconf pkg-config unzip libcppunit-dev libssl-dev sqlite3 libevent-dev libhiredis-dev libpq-dev mysql-client|| return 1
 			;;
 
 		CentOS)
-			yum -y install gcc-c++ libtool openssl-devel sqlite libevent libevent-devel  hiredis hiredis-devel || return 1
+			yum -y install gcc-c++ libtool libcppunit-dev openssl-devel sqlite libevent libevent-devel  hiredis hiredis-devel || return 1
 			;;
 
 		*)
