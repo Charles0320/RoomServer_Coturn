@@ -1842,6 +1842,28 @@ static void init_domain(void)
 #endif
 }
 
+static void zktest_exist_completion(int rc, const char *name, const void *data)
+{
+
+
+	if(rc==(int)ZOK){
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver has been existed---------\n");
+
+
+	}else(rc==(int)ZNONODE){
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver is not existed---------\n");
+
+				const char* data = "turnserver";
+
+		zoo_acreate(zt, "/turnserver", data, strlen(data),
+           &ZOO_OPEN_ACL_UNSAFE, 0,
+           zktest_string_completion, "turnserver acreate");
+
+
+	}
+}
 
 static void zktest_string_completion(int rc, const char *name, const void *data)
 {
@@ -1887,31 +1909,7 @@ static void zktest_stat_completion(int rc, const struct Stat *stat, const void *
 
 static void createRootNode(zhandle_t* zt){
 
-	int ret = 0;
-
-	ret = zoo_aexists(zt, "/turnserver", 1, zktest_stat_completion, "/turnserver");
-
-	if(ret){
-
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver is not existed---------\n");
-		
-		const char* data = "turnserver";
-
-		ret = zoo_acreate(zt, "/turnserver", data, strlen(data),
-           &ZOO_OPEN_ACL_UNSAFE, 0,
-           zktest_string_completion, "turnserver acreate");
-
-		if(ret)
-		{
-			TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver create failed!!!\n");
-			exit(EXIT_FAILURE);
-
-		}
-
-	}else{
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"-----------turnserver has existed--------\n");
-
-	}
+	zoo_aexists(zt, "/turnserver", 1, zktest_exist_completion, "/turnserver");
 
 }
 
