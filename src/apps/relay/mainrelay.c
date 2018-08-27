@@ -1949,11 +1949,11 @@ static void zookeeperRegister(const char* zookeeperServer){
 
 	int ret = 0;
 
-	ret = zoo_aexists(zkhandle, "/turnserver", 1, zktest_stat_completion, "aexists");
+	ret = zoo_exists(zkhandle, "/turnserver", 1, zktest_stat_completion);
 
 	if(ret){
 
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver is not existed");
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver is not existed---------");
 		
 		const char* data = "turnserver";
 
@@ -1969,7 +1969,7 @@ static void zookeeperRegister(const char* zookeeperServer){
 		}
 
 	}else{
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver has been existed");
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"-----------turnserver has been existed-------");
 
 	}
 
