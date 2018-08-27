@@ -1851,6 +1851,40 @@ static void zktest_string_completion(int rc, const char *name, const void *data)
     }
 }
 
+static void zktest_dump_stat(const struct Stat *stat)
+{
+    char tctimes[40];
+    char tmtimes[40];
+    time_t tctime;
+    time_t tmtime;
+
+    if (!stat) {
+        fprintf(stderr,"null\n");
+        return;
+    }
+    tctime = stat->ctime/1000;
+    tmtime = stat->mtime/1000;
+       
+    ctime_r(&tmtime, tmtimes);
+    ctime_r(&tctime, tctimes);
+       
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tctime = %s\tczxid=%llx\n"
+    "\tmtime=%s\tmzxid=%llx\n"
+    "\tversion=%x\taversion=%x\n"
+    "\tephemeralOwner = %llx\n",
+     tctimes, stat->czxid,
+     tmtimes, stat->mzxid,
+    (unsigned int)stat->version, (unsigned int)stat->aversion,
+    stat->ephemeralOwner);
+}
+
+static void zktest_stat_completion(int rc, const struct Stat *stat, const void *data)
+{
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "%s: rc = %d Stat:\n", (char*)data, rc);
+    zktest_dump_stat(stat);
+}
+
+
 static void createRootNode(const char* zookeeperServer){
 
 	int ret = 0;
@@ -1925,38 +1959,6 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
 	}
 }
 
-static void zktest_dump_stat(const struct Stat *stat)
-{
-    char tctimes[40];
-    char tmtimes[40];
-    time_t tctime;
-    time_t tmtime;
-
-    if (!stat) {
-        fprintf(stderr,"null\n");
-        return;
-    }
-    tctime = stat->ctime/1000;
-    tmtime = stat->mtime/1000;
-       
-    ctime_r(&tmtime, tmtimes);
-    ctime_r(&tctime, tctimes);
-       
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tctime = %s\tczxid=%llx\n"
-    "\tmtime=%s\tmzxid=%llx\n"
-    "\tversion=%x\taversion=%x\n"
-    "\tephemeralOwner = %llx\n",
-     tctimes, stat->czxid,
-     tmtimes, stat->mzxid,
-    (unsigned int)stat->version, (unsigned int)stat->aversion,
-    stat->ephemeralOwner);
-}
-
-static void zktest_stat_completion(int rc, const struct Stat *stat, const void *data)
-{
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "%s: rc = %d Stat:\n", (char*)data, rc);
-    zktest_dump_stat(stat);
-}
 
 
 
