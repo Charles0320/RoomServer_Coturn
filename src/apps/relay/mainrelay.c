@@ -1968,6 +1968,9 @@ static void zookeeperRegister(const char* zookeeperServer){
 
 		}
 
+	}else{
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver has been existed");
+
 	}
 
 	createEmpNode(zkhandle);
