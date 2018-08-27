@@ -1888,6 +1888,8 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
 
 	if(state==ZOO_CONNECTED_STATE)
 	{
+		createRootNode(zh);
+
 		createEmpNode(zh);
 		
 	}
@@ -1944,8 +1946,13 @@ static void zookeeperRegister(const char* zookeeperServer){
         exit(EXIT_FAILURE);
     }
 
-    // struct ACL ALL_ACL[] = {{ZOO_PERM_ALL, ZOO_ANYONE_ID_UNSAFE}};
-    // struct ACL_vector ALL_PERMS = {1, ALL_ACL};
+
+
+
+
+}
+
+static void createRootNode(const char* zookeeperServer){
 
 	int ret = 0;
 
@@ -1972,9 +1979,6 @@ static void zookeeperRegister(const char* zookeeperServer){
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"-----------turnserver has existed--------");
 
 	}
-
-	createEmpNode(zkhandle);
-
 
 }
 
