@@ -1842,28 +1842,18 @@ static void init_domain(void)
 #endif
 }
 
-
-
-static void zktest_string_completion(int rc, const char *name, const void *data)
+static void zktest_tnode_completion(int rc, const char *name, const void *data)
 {
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
-    if (!rc) {
-        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tname = %s\n", name);
-    }
-}
-
-static void zktest_exist_completion(int rc, const char *name, const void *data)
-{
-
+	char* path  = (char*)data;
 
 	if(rc==(int)ZOK){
 
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver has been existed---------\n");
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------tnode %s created---------\n",path);
 
 
-	}else if(rc==(int)ZNONODE){
+	}else{
 
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver is not existed---------\n");
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------tnode %s create failed---------\n",path);
 
 				const char* data = "turnserver";
 
@@ -1873,6 +1863,52 @@ static void zktest_exist_completion(int rc, const char *name, const void *data)
 
 
 	}
+
+	if(path){
+		free(path);
+	}
+}
+
+
+static void zktest_snode_completion(int rc, const char *name, const void *data)
+{
+	
+	char* path  = (char*)data;
+	if(rc==(int)ZOK){
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------snode %s created---------\n",path);
+
+	}else{
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------snode %s create failed---------\n",path);
+
+	}
+
+	if(path){
+		free(path);
+	}
+}
+
+static void zktest_exist_completion(int rc, const char *name, const void *data)
+{
+
+
+	if(rc==(int)ZOK){
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver root node has been existed---------\n");
+		createEmpNode(zkhandle);
+
+
+	}else if(rc==(int)ZNONODE){
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver root node is not existed---------\n");
+		createRootNode(zkhandle);
+
+
+
+	}
+
+
 }
 
 static void zktest_dump_stat(const struct Stat *stat)
@@ -1908,10 +1944,29 @@ static void zktest_stat_completion(int rc, const struct Stat *stat, const void *
     zktest_dump_stat(stat);
 }
 
+static void checkRootNode(zhandle_t* zt){
+
+	int ret = zoo_aexists(zt, "/turnserver", 1, zktest_exist_completion, strdup("/turnserver"));
+
+	if (ret) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver aexists");
+       
+    }
+
+}
 
 static void createRootNode(zhandle_t* zt){
 
-	zoo_aexists(zt, "/turnserver", 1, zktest_exist_completion, "/turnserver");
+	const char* data = "turnserver";
+
+	int ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
+           &ZOO_OPEN_ACL_UNSAFE, 0,
+           zktest_snode_completion, "turnserver acreate");
+	if (ret) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver adelete");
+       
+    }
+
 
 }
 
@@ -1932,7 +1987,7 @@ static void createEmpNode(zhandle_t* zt)
 
     int ret = zoo_acreate(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
            &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
-           zktest_string_completion, "acreate");
+           zktest_tnode_completion, strdup(empNode));
 	
     if (ret) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
@@ -1952,9 +2007,7 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
 
 	if(state==ZOO_CONNECTED_STATE)
 	{
-		createRootNode(zh);
-
-		createEmpNode(zh);
+		checkRootNode(zh);
 		
 	}
 }
