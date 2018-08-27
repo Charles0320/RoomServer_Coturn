@@ -1949,7 +1949,7 @@ static void zookeeperRegister(const char* zookeeperServer){
 
 	int ret = 0;
 
-	ret = zoo_aexists(zkhandle, "/turnserver", 1, zktest_stat_completion, NULL);
+	ret = zoo_aexists(zkhandle, "/turnserver", 1, zktest_stat_completion, "/turnserver");
 
 	if(ret){
 
