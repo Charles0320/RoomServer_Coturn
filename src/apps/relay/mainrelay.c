@@ -1864,13 +1864,11 @@ static void createEmpNode(zhandle_t* zt)
 
 	const char* empNodeConst = (const char*)empNode;
 
-	int ret = zoo_create(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
-           &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
-           NULL,0);
+	
 
-    //int ret = zoo_acreate(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
-    //       &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
-    //       zktest_string_completion, "acreate");
+    int ret = zoo_acreate(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
+           &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
+           zktest_string_completion, "acreate");
 	
     if (ret) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
@@ -1951,7 +1949,7 @@ static void zookeeperRegister(const char* zookeeperServer){
 
 	int ret = 0;
 
-	ret = zoo_exists(zkhandle, "/turnserver", 1, zktest_stat_completion);
+	ret = zoo_aexists(zkhandle, "/turnserver", 1, zktest_stat_completion, NULL);
 
 	if(ret){
 
@@ -1959,13 +1957,9 @@ static void zookeeperRegister(const char* zookeeperServer){
 		
 		const char* data = "turnserver";
 
-		ret = zoo_create(zkhandle, "/turnserver", data, strlen(data),
+		ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
            &ZOO_OPEN_ACL_UNSAFE, 0,
-           NULL, 0);
-
-		//ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
-        //   &ZOO_OPEN_ACL_UNSAFE, 0,
-        //   zktest_string_completion, "turnserver acreate");
+           zktest_string_completion, "turnserver acreate");
 
 		if(ret)
 		{
@@ -1975,7 +1969,7 @@ static void zookeeperRegister(const char* zookeeperServer){
 		}
 
 	}else{
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"-----------turnserver has been existed-------");
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"-----------turnserver has existed--------");
 
 	}
 
