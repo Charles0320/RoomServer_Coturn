@@ -1885,11 +1885,11 @@ static void zktest_stat_completion(int rc, const struct Stat *stat, const void *
 }
 
 
-static void createRootNode(const char* zookeeperServer){
+static void createRootNode(zhandle_t* zt){
 
 	int ret = 0;
 
-	ret = zoo_aexists(zkhandle, "/turnserver", 1, zktest_stat_completion, "/turnserver");
+	ret = zoo_aexists(zt, "/turnserver", 1, zktest_stat_completion, "/turnserver");
 
 	if(ret){
 
@@ -1897,7 +1897,7 @@ static void createRootNode(const char* zookeeperServer){
 		
 		const char* data = "turnserver";
 
-		ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
+		ret = zoo_acreate(zt, "/turnserver", data, strlen(data),
            &ZOO_OPEN_ACL_UNSAFE, 0,
            zktest_string_completion, "turnserver acreate");
 
