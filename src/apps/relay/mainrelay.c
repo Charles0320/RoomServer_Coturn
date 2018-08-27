@@ -1864,11 +1864,13 @@ static void createEmpNode(zhandle_t* zt)
 
 	const char* empNodeConst = (const char*)empNode;
 
-	
-
-    int ret = zoo_acreate(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
+	int ret = zoo_create(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
            &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
-           zktest_string_completion, "acreate");
+           NULL,0);
+
+    //int ret = zoo_acreate(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
+    //       &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
+    //       zktest_string_completion, "acreate");
 	
     if (ret) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
@@ -1957,9 +1959,13 @@ static void zookeeperRegister(const char* zookeeperServer){
 		
 		const char* data = "turnserver";
 
-		ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
+		ret = zoo_create(zkhandle, "/turnserver", data, strlen(data),
            &ZOO_OPEN_ACL_UNSAFE, 0,
-           zktest_string_completion, "turnserver acreate");
+           NULL, 0);
+
+		//ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
+        //   &ZOO_OPEN_ACL_UNSAFE, 0,
+        //   zktest_string_completion, "turnserver acreate");
 
 		if(ret)
 		{
