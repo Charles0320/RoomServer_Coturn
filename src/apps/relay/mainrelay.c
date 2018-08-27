@@ -1893,7 +1893,7 @@ static void createRootNode(zhandle_t* zt){
 
 	if(ret){
 
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver is not existed---------");
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver is not existed---------\n");
 		
 		const char* data = "turnserver";
 
@@ -1903,13 +1903,13 @@ static void createRootNode(zhandle_t* zt){
 
 		if(ret)
 		{
-			TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver create failed!!!");
+			TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver create failed!!!\n");
 			exit(EXIT_FAILURE);
 
 		}
 
 	}else{
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"-----------turnserver has existed--------");
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"-----------turnserver has existed--------\n");
 
 	}
 
@@ -1918,13 +1918,13 @@ static void createRootNode(zhandle_t* zt){
 static void createEmpNode(zhandle_t* zt)
 {
 
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s",turn_params.zookeeper_emp_node);
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s\n",turn_params.zookeeper_emp_node);
 
 	u08bits empNode[256];
 
 	snprintf((s08bits*)empNode, 256, "/turnserver/%s", turn_params.zookeeper_emp_node);
 
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "empNode:%s", empNode);
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "empNode:%s\n", empNode);
 
 	const char* empNodeConst = (const char*)empNode;
 
@@ -2319,7 +2319,7 @@ int main(int argc, char **argv)
 	snprintf((s08bits*)turnBuffer, MAX_IOA_ADDR_STRING, "%s:%d", addrbuf, turn_params.listener_port);
 
 
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------external ip=%s-----------",turnBuffer);
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------external ip=%s-----------\n",turnBuffer);
 
 	
 	setup_server();
