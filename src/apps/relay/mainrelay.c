@@ -1955,8 +1955,9 @@ static void zookeeperRegister(const char* zookeeperServer){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"turnserver is not existed");
 		
+		const char* data = "turnserver";
 
-		ret = zoo_acreate(zkhandle, "/turnserver", "", 0,
+		ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
            &ZOO_OPEN_ACL_UNSAFE, 0,
            zktest_string_completion, "turnserver acreate");
 
