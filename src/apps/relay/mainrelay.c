@@ -1857,7 +1857,7 @@ static void zktest_exist_completion(int rc, const char *name, const void *data)
 
 				const char* data = "turnserver";
 
-		zoo_acreate(zt, "/turnserver", data, strlen(data),
+		zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
            &ZOO_OPEN_ACL_UNSAFE, 0,
            zktest_string_completion, "turnserver acreate");
 
