@@ -1979,7 +1979,16 @@ static void zookeeperRegister(const char* zookeeperServer){
     }
 
 
+}
 
+static void zookeeperUnRegister(){
+	
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperServer UnRegister----");
+
+    if (zkhandle != NULL) {
+        
+		zookeeper_close(zkhandle);
+    }
 
 
 }
@@ -2330,7 +2339,7 @@ int main(int argc, char **argv)
 	
 	run_listener_server(&(turn_params.listener));
 
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "----------end-----------");
+	zookeeperUnRegister();
 
 	return 0;
 }
