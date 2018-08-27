@@ -1842,6 +1842,16 @@ static void init_domain(void)
 #endif
 }
 
+
+
+static void zktest_string_completion(int rc, const char *name, const void *data)
+{
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
+    if (!rc) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tname = %s\n", name);
+    }
+}
+
 static void zktest_exist_completion(int rc, const char *name, const void *data)
 {
 
@@ -1863,14 +1873,6 @@ static void zktest_exist_completion(int rc, const char *name, const void *data)
 
 
 	}
-}
-
-static void zktest_string_completion(int rc, const char *name, const void *data)
-{
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"[%s]: rc = %d\n", (char*)(data==0?"null":data), rc);
-    if (!rc) {
-        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "\tname = %s\n", name);
-    }
 }
 
 static void zktest_dump_stat(const struct Stat *stat)
