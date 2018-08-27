@@ -1889,7 +1889,7 @@ static void createRootNode(zhandle_t* zt){
 
 	int ret = 0;
 
-	ret = zoo_aexists(zt, "/turnserver", 1, zktest_stat_completion, "/turnserver");
+	ret = zoo_exists(zt, "/turnserver", 1, zktest_stat_completion);
 
 	if(ret){
 
