@@ -1891,7 +1891,6 @@ static void zktest_tnode_completion(int rc, const char *name, const void *data)
 static void createEmpNode(zhandle_t* zt)
 {
 
-	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s\n",turn_params.zookeeper_emp_node);
 
 	u08bits empNode[256];
 
@@ -2005,6 +2004,7 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
 
 	if(state==ZOO_CONNECTED_STATE)
 	{
+		zkhandle = zh;
 		checkRootNode(zh);
 		
 	}
@@ -2018,6 +2018,7 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
 static void zookeeperRegister(const char* zookeeperServer){
 	
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperServer---%s",zookeeperServer);
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s\n",turn_params.zookeeper_emp_node);
 	
 
     int timeout = 3000;
