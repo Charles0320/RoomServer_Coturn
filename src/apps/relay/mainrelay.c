@@ -1851,7 +1851,7 @@ static void zktest_exist_completion(int rc, const char *name, const void *data)
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver has been existed---------\n");
 
 
-	}else(rc==(int)ZNONODE){
+	}else if(rc==(int)ZNONODE){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver is not existed---------\n");
 
