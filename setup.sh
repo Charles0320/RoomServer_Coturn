@@ -108,14 +108,23 @@ function jwaoo_install_coturn()
 {
 	echo "Build: ${COTURN_PATH}"
 	jwaoo_git_clone "http://180.169.167.166:6380/git/RoomServer_Coturn.git" "${COTURN_PATH}"  "v1.0.0" || return 1
-	./configure --prefix=/usr || return 1
-	make -j && make install || return 1
+
+	jwaoo_install_compile || return 1
 
 	jwaoo_coturn_systemd || return 1
 
 	jwaoo_copy_Config || return 1
 
 
+
+}
+
+function jwaoo_install_compile()
+{
+
+	cd ${COTURN_PATH}
+	./configure --prefix=/usr || return 1
+	make -j && make install || return 1
 
 }
 
@@ -134,6 +143,9 @@ case "$1" in
 
 	coturn)
 		jwaoo_install_coturn
+		;;
+	compile)
+		jwaoo_install_compile
 		;;
 
 	*)
