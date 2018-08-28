@@ -1933,7 +1933,7 @@ static void zktest_snode_completion(int rc, const char *name, const void *data)
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------snode %s create failed---------\n",path);
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------prepare create snode %s again---------\n",path);
-		createRootNode();
+		createRootNode(zkhandle);
 
 	}
 
