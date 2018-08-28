@@ -1943,7 +1943,7 @@ static void createRootNode(zhandle_t* zt){
 
 	int ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
            &ZOO_OPEN_ACL_UNSAFE, 0,
-           zktest_snode_completion, "turnserver acreate");
+           zktest_snode_completion, turn_strdup("turnserver acreate"));
 	if (ret) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver adelete");
        
@@ -2004,8 +2004,7 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
 
 	if(state==ZOO_CONNECTED_STATE)
 	{
-		zkhandle = zh;
-		//checkRootNode(zh);
+		checkRootNode(zh);
 		
 	}
 }
