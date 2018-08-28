@@ -371,9 +371,11 @@ void zktest_tnode_completion(int rc, const char *name, const void *data);
 void createEmpNode(zhandle_t* zt);
 void zktest_snode_completion(int rc, const char *name, const void *data);
 void createRootNode(zhandle_t* zt);
-void zktest_exist_completion(int rc, const char *name, const void *data);
 void checkRootNode(zhandle_t* zt);
+void checkEmpNode(zhandle_t* zt);
 void zktest_watcher_g(zhandle_t* zh, int type, int state,const char* path, void* watcherCtx);
+void zktest_exist_tnode_completion(int rc, const char *name, const void *data);
+void zktest_exist_snode_completion(int rc, const char *name, const void *data);
 void zookeeperRegister(const char* zookeeperServer);
 void zookeeperUnRegister();
 

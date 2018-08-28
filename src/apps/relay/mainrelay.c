@@ -1909,10 +1909,7 @@ void createEmpNode(zhandle_t* zt)
            zktest_tnode_completion, turn_strdup(empNode));
 	
     if (ret) {
-        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete");
-
-
-       
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete"); 
     }
 
 }
@@ -1959,14 +1956,32 @@ void createRootNode(zhandle_t* zt)
 
 }
 
-void zktest_exist_completion(int rc, const char *name, const void *data)
+void zktest_exist_tnode_completion(int rc, const char *name, const void *data)
 {
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------zktest_exist_tnode_completion:%d---------\n",rc);
+	if(rc==(int)ZOK){
 
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver tnode has been existed---------\n");
+
+
+	}else if(rc==(int)ZNONODE){
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver tnode is not existed---------\n");
+		createEmpNode(zkhandle);
+
+	}
+
+
+}
+
+void zktest_exist_snode_completion(int rc, const char *name, const void *data)
+{
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------zktest_exist_snode_completion:%d---------\n",rc);
 
 	if(rc==(int)ZOK){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver root node has been existed---------\n");
-		createEmpNode(zkhandle);
+		checkEmpNode(zkhandle);
 
 
 	}else if(rc==(int)ZNONODE){
@@ -1988,10 +2003,28 @@ void zktest_exist_completion(int rc, const char *name, const void *data)
 void checkRootNode(zhandle_t* zt)
 {
 
-	int ret = zoo_aexists(zt, "/turnserver", 1, zktest_exist_completion, turn_strdup("/turnserver"));
+	int ret = zoo_aexists(zt, "/turnserver", 1, zktest_exist_snode_completion, "");
 
 	if (ret) {
-        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver aexists");
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "turnserver snode aexists");
+       
+    }
+
+}
+
+void checkEmpNode(zhandle_t* zt)
+{
+
+	u08bits empNode[256];
+
+	snprintf((s08bits*)empNode, 256, "/turnserver/%s", turn_params.zookeeper_emp_node);
+
+	const char* empNodeConst = (const char*)empNode;
+
+	int ret = zoo_aexists(zt, empNode, 1, zktest_exist_tnode_completion, "");
+
+	if (ret) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "turnserver tnode aexists");
        
     }
 
