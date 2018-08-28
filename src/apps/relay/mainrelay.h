@@ -367,15 +367,15 @@ void set_bps_capacity(band_limit_t value);
 band_limit_t get_max_bps(void);
 void set_max_bps(band_limit_t value);
 
-static void zktest_tnode_completion(int rc, const char *name, const void *data);
-static void createEmpNode(zhandle_t* zt);
-static void zktest_snode_completion(int rc, const char *name, const void *data);
-static void createRootNode(zhandle_t* zt);
-static void zktest_exist_completion(int rc, const char *name, const void *data);
-static void checkRootNode(zhandle_t* zt);
-static void zktest_watcher_g(zhandle_t* zh, int type, int state,const char* path, void* watcherCtx);
-static void zookeeperRegister(const char* zookeeperServer);
-static void zookeeperUnRegister();
+void zktest_tnode_completion(int rc, const char *name, const void *data);
+void createEmpNode(zhandle_t* zt);
+void zktest_snode_completion(int rc, const char *name, const void *data);
+void createRootNode(zhandle_t* zt);
+void zktest_exist_completion(int rc, const char *name, const void *data);
+void checkRootNode(zhandle_t* zt);
+void zktest_watcher_g(zhandle_t* zh, int type, int state,const char* path, void* watcherCtx);
+void zookeeperRegister(const char* zookeeperServer);
+void zookeeperUnRegister();
 
 ///////////////////////////////
 

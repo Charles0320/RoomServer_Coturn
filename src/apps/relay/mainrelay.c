@@ -1869,7 +1869,7 @@ static void zktest_dump_stat(const struct Stat *stat)
     stat->ephemeralOwner);
 }
 
-static void zktest_tnode_completion(int rc, const char *name, const void *data)
+void zktest_tnode_completion(int rc, const char *name, const void *data)
 {
 	char* path  = (char*)data;
 
@@ -1882,7 +1882,7 @@ static void zktest_tnode_completion(int rc, const char *name, const void *data)
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------tnode %s create failed---------\n",path);
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------prepare create tnode %s again---------\n",path);
-		createEmpNode();
+		createEmpNode(zkhandle);
 	}
 
 	if(path){
@@ -1890,7 +1890,7 @@ static void zktest_tnode_completion(int rc, const char *name, const void *data)
 	}
 }
 
-static void createEmpNode(zhandle_t* zt)
+void createEmpNode(zhandle_t* zt)
 {
 
 
@@ -1918,7 +1918,7 @@ static void createEmpNode(zhandle_t* zt)
 }
 
 
-static void zktest_snode_completion(int rc, const char *name, const void *data)
+void zktest_snode_completion(int rc, const char *name, const void *data)
 {
 	
 	char* path  = (char*)data;
@@ -1943,7 +1943,7 @@ static void zktest_snode_completion(int rc, const char *name, const void *data)
 }
 
 
-static void createRootNode(zhandle_t* zt)
+void createRootNode(zhandle_t* zt)
 {
 
 	const char* data = "turnserver";
@@ -1959,7 +1959,7 @@ static void createRootNode(zhandle_t* zt)
 
 }
 
-static void zktest_exist_completion(int rc, const char *name, const void *data)
+void zktest_exist_completion(int rc, const char *name, const void *data)
 {
 
 
@@ -1985,7 +1985,7 @@ static void zktest_exist_completion(int rc, const char *name, const void *data)
 
 
 
-static void checkRootNode(zhandle_t* zt)
+void checkRootNode(zhandle_t* zt)
 {
 
 	int ret = zoo_aexists(zt, "/turnserver", 1, zktest_exist_completion, turn_strdup("/turnserver"));
@@ -2001,7 +2001,7 @@ static void checkRootNode(zhandle_t* zt)
 
 
 
-static void zktest_watcher_g(zhandle_t* zh, int type, int state,
+void zktest_watcher_g(zhandle_t* zh, int type, int state,
         const char* path, void* watcherCtx)
 {
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"Something happened.%x\n",zh);
@@ -2022,7 +2022,7 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
 
 
 
-static void zookeeperRegister(const char* zookeeperServer){
+void zookeeperRegister(const char* zookeeperServer){
 	
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperServer---%s",zookeeperServer);
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperRegister---%s\n",turn_params.zookeeper_emp_node);
@@ -2040,7 +2040,7 @@ static void zookeeperRegister(const char* zookeeperServer){
 
 }
 
-static void zookeeperUnRegister(){
+void zookeeperUnRegister(){
 	
 	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----zookeeperServer UnRegister----");
 
