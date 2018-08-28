@@ -2005,7 +2005,7 @@ static void zktest_watcher_g(zhandle_t* zh, int type, int state,
 	if(state==ZOO_CONNECTED_STATE)
 	{
 		zkhandle = zh;
-		checkRootNode(zh);
+		//checkRootNode(zh);
 		
 	}
 }
