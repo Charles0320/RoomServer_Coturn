@@ -1878,7 +1878,7 @@ void zktest_tnode_completion(int rc, const char *name, const void *data)
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------tnode %s created---------\n",path);
 
 
-	}else{
+	}else if(rc!=(int)ZNODEEXISTS){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------tnode %s create failed with reson:%d---------\n",path,rc);
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------prepare create tnode %s again---------\n",path);
@@ -1929,7 +1929,7 @@ void zktest_snode_completion(int rc, const char *name, const void *data)
 		createEmpNode(zkhandle);
 
 
-	}else{
+	}else if(rc!=(int)ZNODEEXISTS){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------snode %s create failed with reason:%d---------\n",path,rc);
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------prepare create snode %s again---------\n",path);
