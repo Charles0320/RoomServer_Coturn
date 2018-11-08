@@ -1927,7 +1927,7 @@ void zktest_snode_completion(int rc, const char *name, const void *data)
 		createEmpNode(zkhandle);
 
 
-	}else if(rc==(int)ZNODEEXISTS){
+	}else if(rc!=(int)ZNODEEXISTS){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------snode %s create failed with reason:%d---------\n",path,rc);
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------prepare create snode %s again---------\n",path);
