@@ -2010,11 +2010,7 @@ void zktest_watcher_g(zhandle_t* zh, int type, int state,
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"path: %s\n", path);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"watcherCtx: %s\n", (char *)watcherCtx);
 
-	if(state==ZOO_CONNECTED_STATE && type==ZOO_SESSION_EVENT)
-	{
-		checkRootNode(zh);
-		
-	}
+
 }
 
 
@@ -2036,6 +2032,7 @@ void zookeeperRegister(const char* zookeeperServer){
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error when connecting to zookeeper servers...\n");
         exit(EXIT_FAILURE);
     }
+	checkRootNode(zkhandle);
 
 
 
