@@ -1882,7 +1882,7 @@ void zktest_tnode_completion(int rc, const char *name, const void *data)
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------tnode %s create failed with reson:%d---------\n",path,rc);
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------prepare create tnode %s again---------\n",path);
-		createEmpNode(zkhandle);
+		//createEmpNode(zkhandle);
 	}
 
 	if(path){
@@ -1971,7 +1971,7 @@ void zktest_exist_snode_completion(int rc, const char *name, const void *data)
 	}else if(rc==(int)ZNONODE){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver root node is not existed---------\n");
-		createRootNode(zkhandle);
+		//createRootNode(zkhandle);
 
 
 
