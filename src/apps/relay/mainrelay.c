@@ -1987,12 +1987,15 @@ void zktest_exist_snode_completion(int rc, const char *name, const void *data)
 void checkRootNode(zhandle_t* zt)
 {
 
+	TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"---------checkRootNode--------\n");
+
 	int ret = zoo_aexists(zt, "/turnserver", 1, zktest_exist_snode_completion, "");
 
 	if (ret) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "turnserver snode aexists");
        
     }
+
 
 }
 
