@@ -1869,7 +1869,7 @@ static void zktest_dump_stat(const struct Stat *stat)
     stat->ephemeralOwner);
 }
 
-void zktest_tnode_completion(int rc, const char *name, const void *data)
+void zktest_create_tnode_completion(int rc, const char *name, const void *data)
 {
 	char* path  = (char*)data;
 
@@ -1881,8 +1881,7 @@ void zktest_tnode_completion(int rc, const char *name, const void *data)
 	}else if(rc!=(int)ZNODEEXISTS){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------tnode %s create failed with reson:%d---------\n",path,rc);
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------prepare create tnode %s again---------\n",path);
-		//createEmpNode(zkhandle);
+
 	}
 
 	if(path){
@@ -1907,7 +1906,7 @@ void createEmpNode(zhandle_t* zt)
 	
     int ret = zoo_acreate(zt, empNodeConst, data, strlen(data),
            &ZOO_OPEN_ACL_UNSAFE, 3,
-           zktest_tnode_completion, turn_strdup(empNode));
+           zktest_create_tnode_completion, turn_strdup(empNode));
 	
     if (ret) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver/id adelete"); 
@@ -1930,8 +1929,7 @@ void zktest_create_snode_completion(int rc, const char *name, const void *data)
 	}else if(rc!=(int)ZNODEEXISTS){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------snode %s create failed with reason:%d---------\n",path,rc);
-		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------prepare create snode %s again---------\n",path);
-
+	
 	}
 
 	if(path){
@@ -2012,7 +2010,7 @@ void zktest_watcher_g(zhandle_t* zh, int type, int state,
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"path: %s\n", path);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"watcherCtx: %s\n", (char *)watcherCtx);
 
-	if(state==ZOO_CONNECTED_STATE)
+	if(state==ZOO_CONNECTED_STATE && type==ZOO_SESSION_EVENT)
 	{
 		checkRootNode(zh);
 		
