@@ -2040,6 +2040,8 @@ void zookeeperRegister(const char* zookeeperServer){
         exit(EXIT_FAILURE);
     }
 
+	checkRootNode();
+
 
 }
 
