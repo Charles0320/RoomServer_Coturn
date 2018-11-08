@@ -1906,7 +1906,7 @@ void createEmpNode(zhandle_t* zt)
 
 	
     int ret = zoo_acreate(zt, empNodeConst, data, strlen(data),
-           &ZOO_CREATOR_ALL_ACL, 3,
+           &ZOO_OPEN_ACL_UNSAFE, 3,
            zktest_tnode_completion, turn_strdup(empNode));
 	
     if (ret) {
@@ -1946,7 +1946,7 @@ void createRootNode(zhandle_t* zt)
 
 
 	int ret = zoo_acreate(zkhandle, "/turnserver", "", 0,
-           &ZOO_CREATOR_ALL_ACL, 0,
+           &ZOO_OPEN_ACL_UNSAFE, 0,
            zktest_snode_completion, turn_strdup("turnserver acreate"));
 	if (ret) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver acreate");
