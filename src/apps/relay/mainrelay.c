@@ -1902,10 +1902,11 @@ void createEmpNode(zhandle_t* zt)
 
 	const char* empNodeConst = (const char*)empNode;
 
-	
+	const char* data = (const char*)turn_params.zookeeper_emp_node;
 
-    int ret = zoo_acreate(zt, empNodeConst, empNodeConst, strlen(empNodeConst),
-           &ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL,
+	
+    int ret = zoo_acreate(zt, empNodeConst, data, strlen(data),
+           &ZOO_OPEN_ACL_UNSAFE, 3,
            zktest_tnode_completion, turn_strdup(empNode));
 	
     if (ret) {
@@ -1943,9 +1944,8 @@ void zktest_snode_completion(int rc, const char *name, const void *data)
 void createRootNode(zhandle_t* zt)
 {
 
-	const char* data = "turnserver";
 
-	int ret = zoo_acreate(zkhandle, "/turnserver", data, strlen(data),
+	int ret = zoo_acreate(zkhandle, "/turnserver", "", 0,
            &ZOO_OPEN_ACL_UNSAFE, 0,
            zktest_snode_completion, turn_strdup("turnserver acreate"));
 	if (ret) {
