@@ -1916,7 +1916,7 @@ void createEmpNode(zhandle_t* zt)
 }
 
 
-void zktest_snode_completion(int rc, const char *name, const void *data)
+void zktest_create_snode_completion(int rc, const char *name, const void *data)
 {
 	
 	char* path  = (char*)data;
@@ -1946,7 +1946,7 @@ void createRootNode(zhandle_t* zt)
 
 	int ret = zoo_acreate(zkhandle, "/turnserver", "", 0,
            &ZOO_OPEN_ACL_UNSAFE, 0,
-           zktest_snode_completion, turn_strdup("turnserver acreate"));
+           zktest_create_snode_completion, turn_strdup("turnserver acreate"));
 	if (ret) {
         TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Error %d for %s\n", ret, "/turnserver acreate");
        
@@ -1970,7 +1970,7 @@ void zktest_exist_snode_completion(int rc, const char *name, const void *data)
 	}else if(rc==(int)ZNONODE){
 
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"----------turnserver root node is not existed---------\n");
-		//createRootNode(zkhandle);
+		createRootNode(zkhandle);
 
 
 

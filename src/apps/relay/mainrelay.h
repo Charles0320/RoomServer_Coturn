@@ -367,9 +367,9 @@ void set_bps_capacity(band_limit_t value);
 band_limit_t get_max_bps(void);
 void set_max_bps(band_limit_t value);
 
-void zktest_tnode_completion(int rc, const char *name, const void *data);
+void zktest_create_tnode_completion(int rc, const char *name, const void *data);
 void createEmpNode(zhandle_t* zt);
-void zktest_snode_completion(int rc, const char *name, const void *data);
+void zktest_create_snode_completion(int rc, const char *name, const void *data);
 void createRootNode(zhandle_t* zt);
 void checkRootNode(zhandle_t* zt);
 void checkEmpNode(zhandle_t* zt);
