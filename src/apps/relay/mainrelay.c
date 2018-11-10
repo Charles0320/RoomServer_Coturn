@@ -1844,37 +1844,34 @@ static void init_domain(void)
 
 static const char* zkstate2String(int state){
     switch(state){
-    case 0:
-        return "ZOO_CLOSED_STATE";
-    case CONNECTING_STATE_DEF:
-        return "ZOO_CONNECTING_STATE";
-    case ASSOCIATING_STATE_DEF:
-        return "ZOO_ASSOCIATING_STATE";
-    case CONNECTED_STATE_DEF:
-        return "ZOO_CONNECTED_STATE";
-    case EXPIRED_SESSION_STATE_DEF:
+
+    case ZOO_EXPIRED_SESSION_STATE:
         return "ZOO_EXPIRED_SESSION_STATE";
-    case AUTH_FAILED_STATE_DEF:
+    case ZOO_AUTH_FAILED_STATE:
         return "ZOO_AUTH_FAILED_STATE";
+    case ZOO_CONNECTING_STATE:
+        return "ZOO_CONNECTING_STATE";
+    case ZOO_ASSOCIATING_STATE:
+        return "ZOO_ASSOCIATING_STATE";
+    case ZOO_CONNECTED_STATE:
+        return "ZOO_CONNECTED_STATE";
     }
     return "INVALID_STATE";
 }
 
 static const char* zkwatcherEvent2String(int ev){
     switch(ev){
-    case 0:
-        return "ZOO_ERROR_EVENT";
-    case CREATED_EVENT_DEF:
+    case ZOO_CREATED_EVENT:
         return "ZOO_CREATED_EVENT";
-    case DELETED_EVENT_DEF:
+    case ZOO_DELETED_EVENT:
         return "ZOO_DELETED_EVENT";
-    case CHANGED_EVENT_DEF:
+    case ZOO_CHANGED_EVENT:
         return "ZOO_CHANGED_EVENT";
-    case CHILD_EVENT_DEF:
+    case ZOO_CHILD_EVENT:
         return "ZOO_CHILD_EVENT";
-    case SESSION_EVENT_DEF:
+    case ZOO_SESSION_EVENT:
         return "ZOO_SESSION_EVENT";
-    case NOTWATCHING_EVENT_DEF:
+    case ZOO_NOTWATCHING_EVENT:
         return "ZOO_NOTWATCHING_EVENT";
     }
     return "INVALID_EVENT";
