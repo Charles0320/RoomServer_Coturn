@@ -1842,6 +1842,45 @@ static void init_domain(void)
 #endif
 }
 
+static const char* zkstate2String(int state){
+    switch(state){
+    case 0:
+        return "ZOO_CLOSED_STATE";
+    case CONNECTING_STATE_DEF:
+        return "ZOO_CONNECTING_STATE";
+    case ASSOCIATING_STATE_DEF:
+        return "ZOO_ASSOCIATING_STATE";
+    case CONNECTED_STATE_DEF:
+        return "ZOO_CONNECTED_STATE";
+    case EXPIRED_SESSION_STATE_DEF:
+        return "ZOO_EXPIRED_SESSION_STATE";
+    case AUTH_FAILED_STATE_DEF:
+        return "ZOO_AUTH_FAILED_STATE";
+    }
+    return "INVALID_STATE";
+}
+
+static const char* zkwatcherEvent2String(int ev){
+    switch(ev){
+    case 0:
+        return "ZOO_ERROR_EVENT";
+    case CREATED_EVENT_DEF:
+        return "ZOO_CREATED_EVENT";
+    case DELETED_EVENT_DEF:
+        return "ZOO_DELETED_EVENT";
+    case CHANGED_EVENT_DEF:
+        return "ZOO_CHANGED_EVENT";
+    case CHILD_EVENT_DEF:
+        return "ZOO_CHILD_EVENT";
+    case SESSION_EVENT_DEF:
+        return "ZOO_SESSION_EVENT";
+    case NOTWATCHING_EVENT_DEF:
+        return "ZOO_NOTWATCHING_EVENT";
+    }
+    return "INVALID_EVENT";
+}
+
+
 static void zktest_dump_stat(const struct Stat *stat)
 {
     char tctimes[40];
@@ -2005,10 +2044,12 @@ void zktest_watcher_g(zhandle_t* zh, int type, int state,
         const char* path, void* watcherCtx)
 {
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"Something happened.%x\n",zh);
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"type: %d\n", type);
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"state: %d\n", state);
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"type: %s\n", zkstate2String(type));
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"state: %s\n", zkwatcherEvent2String(state));
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"path: %s\n", path);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"watcherCtx: %s\n", (char *)watcherCtx);
+
+
 
 
 }
