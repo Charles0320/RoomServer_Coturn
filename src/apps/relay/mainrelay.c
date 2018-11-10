@@ -1872,9 +1872,6 @@ static const char* zkwatcherEvent2String(int ev){
 	if(ev==ZOO_CREATED_EVENT){
 
 		return "ZOO_CREATED_EVENT";
-	}else if(ev==ZOO_CREATED_EVENT){
-
-		return "ZOO_CREATED_EVENT";
 	}else if(ev==ZOO_DELETED_EVENT){
 
 		return "ZOO_DELETED_EVENT";
@@ -2059,8 +2056,8 @@ void zktest_watcher_g(zhandle_t* zh, int type, int state,
         const char* path, void* watcherCtx)
 {
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"Something happened.%x\n",zh);
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"type: %s\n", zkstate2String(type));
-    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"state: %s\n", zkwatcherEvent2String(state));
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"type: %s\n", zkwatcherEvent2String(type));
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"state: %s\n", zkstate2String(state));
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"path: %s\n", path);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"watcherCtx: %s\n", (char *)watcherCtx);
 
