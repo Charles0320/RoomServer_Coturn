@@ -2061,6 +2061,20 @@ void zktest_watcher_g(zhandle_t* zh, int type, int state,
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"path: %s\n", path);
     TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"watcherCtx: %s\n", (char *)watcherCtx);
 
+	if(type==ZOO_SESSION_EVENT&&state==ZOO_EXPIRED_SESSION_STATE){
+
+		zookeeper_close(zh);
+		zh = 0;
+
+		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO,"retry init and register zookeeper");
+
+		const char* zookeeper = (const char*)turn_params.zookeeper_server_name;
+
+		zookeeperRegister(zookeeper);
+
+		
+	}
+
 
 
 
